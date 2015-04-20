@@ -7,4 +7,5 @@ ADD_EXECUTABLE( observer_demo
   Demo.cc
   Event.cc
   Observer.cc
+  Subject.cc
 )

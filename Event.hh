@@ -9,6 +9,9 @@ enum class EventType
 
 class Event
 {
+public:
+  EventType type() const;
+
 protected:
   Event( const EventType& type );
 

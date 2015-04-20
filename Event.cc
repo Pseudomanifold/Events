@@ -5,6 +5,11 @@ Event::Event( const EventType& type )
 {
 }
 
+EventType Event::type() const
+{
+  return _type;
+}
+
 CreationEvent::CreationEvent()
   : Event( EventType::Creation )
 {
