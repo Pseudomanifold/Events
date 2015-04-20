@@ -33,7 +33,8 @@ int main( int, char** )
   Subject s;
   s.registerObserver( EventType::Creation,    freeObserver );
   s.registerObserver( EventType::Destruction, freeObserver );
-  //s.registerObserver( EventType::Creation,    std::bind( &classObserver.handleCreation, &classObserver ) );
+  s.registerObserver( EventType::Creation,    std::bind( &ClassObserver::handleCreation, &classObserver, std::placeholders::_1 ) );
+  s.registerObserver( EventType::Destruction, std::bind( &ClassObserver::handleDestruction, &classObserver, std::placeholders::_1 ) );
 
   CreationEvent creation;
   DestructionEvent destruction;
