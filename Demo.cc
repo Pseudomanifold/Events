@@ -1,5 +1,5 @@
-#include "Subject.hh"
 #include "Event.hh"
+#include "Subject.hh"
 
 #include <functional>
 #include <iostream>

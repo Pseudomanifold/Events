@@ -16,7 +16,7 @@ public:
 
   void registerObserver( const EventType& type, function_type&& function );
 
-  void notify( const Event& event )    const;
+  void notify( const Event& event ) const;
 
 private:
   std::map< EventType, std::vector<function_type> > _observers;

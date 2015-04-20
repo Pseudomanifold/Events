@@ -3,20 +3,21 @@
 
 enum class EventType
 {
-  Creation,
+  Creation = 0,
   Destruction
 };
 
 class Event
 {
 public:
-  EventType type() const;
+  virtual~ Event();
+  const EventType& type() const;
 
 protected:
   Event( const EventType& type );
 
 private:
-  const EventType& _type;
+  EventType _type;
 };
 
 class CreationEvent : public Event

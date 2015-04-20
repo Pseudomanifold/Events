@@ -5,7 +5,11 @@ Event::Event( const EventType& type )
 {
 }
 
-EventType Event::type() const
+Event::~Event()
+{
+}
+
+const EventType& Event::type() const
 {
   return _type;
 }
