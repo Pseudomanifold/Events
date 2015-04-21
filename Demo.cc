@@ -1,4 +1,5 @@
 #include "Event.hh"
+#include "Connection.hh"
 #include "Subject.hh"
 
 #include <functional>

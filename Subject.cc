@@ -2,17 +2,40 @@
 #include "Subject.hh"
 #include "Event.hh"
 
+#include <algorithm>
 #include <iostream>
 
-void Subject::registerObserver( const EventType& type, function_type&& function )
+Connection Subject::registerObserver( const EventType& type, function_type&& function )
 {
-  _observers[type].push_back( function );
+  FunctionHandle handle = {
+    _nextID,
+    function
+  };
+
+  _observers[type].push_back( handle );
+
+
+  ++_nextID;
+  return Connection( *this, _nextID - 1 );
 }
 
 void Subject::unregisterObserver( const Connection& connection )
 {
   std::cout << __PRETTY_FUNCTION__ << std::endl
             << "  ID = " << connection.id() << std::endl;
+
+  for( auto&& observer : _observers )
+  {
+    auto&& handles = observer.second;
+
+    for( auto it = handles.begin(); it != handles.end(); )
+    {
+      if( it->id == connection.id() )
+        it = handles.erase( it );
+      else
+        ++it;
+    }
+  }
 }
 
 void Subject::notify( const Event& event ) const
@@ -25,5 +48,5 @@ void Subject::notify( const Event& event ) const
   const auto& observers = _observers.at( type );
 
   for( auto&& observer : observers )
-    observer( event );
+    observer.f( event );
 }
