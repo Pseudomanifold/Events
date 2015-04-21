@@ -7,12 +7,12 @@ Connection::Connection( Subject& subject, unsigned int id )
 {
 }
 
-Connection::~Connection()
-{
-  _subject.unregisterObserver( *this );
-}
-
 unsigned int Connection::id() const
 {
   return _id;
+}
+
+void Connection::disconnect()
+{
+  _subject.unregisterObserver( *this );
 }

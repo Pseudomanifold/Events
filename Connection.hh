@@ -7,9 +7,10 @@ class Connection
 {
 public:
   Connection( Subject& subject, unsigned int id );
-  ~Connection();
 
   unsigned int id() const;
+
+  void disconnect();
 
 private:
   Subject& _subject;

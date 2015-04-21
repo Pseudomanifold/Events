@@ -34,11 +34,16 @@ int main( int, char** )
   Subject s;
   s.registerObserver( EventType::Creation,    freeObserver );
   s.registerObserver( EventType::Destruction, freeObserver );
-  s.registerObserver( EventType::Creation,    std::bind( &ClassObserver::handleCreation, &classObserver, std::placeholders::_1 ) );
+  auto handle = s.registerObserver( EventType::Creation,    std::bind( &ClassObserver::handleCreation, &classObserver, std::placeholders::_1 ) );
   s.registerObserver( EventType::Destruction, std::bind( &ClassObserver::handleDestruction, &classObserver, std::placeholders::_1 ) );
 
   CreationEvent creation;
   DestructionEvent destruction;
+
+  s.notify( creation );
+  s.notify( destruction );
+
+  handle.disconnect();
 
   s.notify( creation );
   s.notify( destruction );
