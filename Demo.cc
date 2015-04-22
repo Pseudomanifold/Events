@@ -21,9 +21,12 @@ public:
     std::cout << __PRETTY_FUNCTION__ << std::endl;
   }
 
-  void handleDestruction( const Event& )
+  void handleDestruction( const Event& e )
   {
     std::cout << __PRETTY_FUNCTION__ << std::endl;
+
+    if( dynamic_cast<const DestructionEvent*>( &e ) )
+      std::cout << __PRETTY_FUNCTION__ << ": Dynamic cast worked" << std::endl;
   }
 };
 
