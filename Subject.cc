@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <iostream>
 
-Connection Subject::registerObserver( std::size_t type, function_type&& function )
+Connection Subject::registerObserver( Event::EventType type, function_type&& function )
 {
   FunctionHandle handle = {
     _nextID,

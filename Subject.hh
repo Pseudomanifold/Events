@@ -1,11 +1,12 @@
 #ifndef SUBJECT_HH__
 #define SUBJECT_HH__
 
+#include "Event.hh"
+
 #include <functional>
 #include <map>
 #include <vector>
 
-class Event;
 class Connection;
 
 class Subject
@@ -21,14 +22,14 @@ private:
   };
 
 public:
-  Connection registerObserver( std::size_t type, function_type&& function );
+  Connection registerObserver( Event::EventType type, function_type&& function );
   void unregisterObserver( const Connection& connection );
 
   void notify( const Event& event ) const;
 
 private:
   unsigned int _nextID = 0;
-  std::map<std::size_t, std::vector<FunctionHandle> > _observers;
+  std::map<Event::EventType, std::vector<FunctionHandle> > _observers;
 };
 
 #endif
