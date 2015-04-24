@@ -5,8 +5,6 @@
 #include <map>
 #include <vector>
 
-// FIXME: Should be forwarded in a header or something
-enum class EventType;
 class Event;
 class Connection;
 
@@ -23,14 +21,14 @@ private:
   };
 
 public:
-  Connection registerObserver( const EventType& type, function_type&& function );
+  Connection registerObserver( std::size_t type, function_type&& function );
   void unregisterObserver( const Connection& connection );
 
   void notify( const Event& event ) const;
 
 private:
   unsigned int _nextID = 0;
-  std::map<EventType, std::vector<FunctionHandle> > _observers;
+  std::map<std::size_t, std::vector<FunctionHandle> > _observers;
 };
 
 #endif

@@ -1,35 +1,45 @@
 #ifndef EVENT_HH__
 #define EVENT_HH__
 
-enum class EventType
-{
-  Creation = 0,
-  Destruction
-};
+#include <functional>
+#include <string>
 
 class Event
 {
 public:
   virtual~ Event();
-  const EventType& type() const;
 
-protected:
-  Event( const EventType& type );
-
-private:
-  EventType _type;
+  virtual std::size_t type() const = 0;
 };
 
 class CreationEvent : public Event
 {
 public:
-  CreationEvent();
+  static std::size_t getType()
+  {
+    std::hash<std::string> hash;
+    return hash( std::string("CreationEvent" ) );
+  }
+
+  virtual std::size_t type() const
+  {
+    return getType();
+  }
 };
 
 class DestructionEvent : public Event
 {
 public:
-  DestructionEvent();
+  static std::size_t getType()
+  {
+    std::hash<std::string> hash;
+    return hash( std::string("DestructionEvent" ) );
+  }
+
+  virtual std::size_t type() const
+  {
+    return getType();
+  }
 };
 
 #endif

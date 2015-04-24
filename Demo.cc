@@ -7,9 +7,9 @@
 
 void freeObserver( const Event& event )
 {
-  if( event.type() == EventType::Creation )
+  if( event.type() == CreationEvent::getType() )
     std::cout << __PRETTY_FUNCTION__ << ": Creation" << std::endl;
-  else if( event.type() == EventType::Destruction )
+  else if( event.type() == DestructionEvent::getType() )
     std::cout << __PRETTY_FUNCTION__ << ": Destruction" << std::endl;
 }
 
@@ -35,10 +35,10 @@ int main( int, char** )
   ClassObserver classObserver;
 
   Subject s;
-  s.registerObserver( EventType::Creation,    freeObserver );
-  s.registerObserver( EventType::Destruction, freeObserver );
-  auto handle = s.registerObserver( EventType::Creation,    std::bind( &ClassObserver::handleCreation, &classObserver, std::placeholders::_1 ) );
-  s.registerObserver( EventType::Destruction, std::bind( &ClassObserver::handleDestruction, &classObserver, std::placeholders::_1 ) );
+  s.registerObserver( CreationEvent::getType(),    freeObserver );
+  s.registerObserver( DestructionEvent::getType(), freeObserver );
+  auto handle = s.registerObserver( CreationEvent::getType(),    std::bind( &ClassObserver::handleCreation, &classObserver, std::placeholders::_1 ) );
+  s.registerObserver( DestructionEvent::getType(), std::bind( &ClassObserver::handleDestruction, &classObserver, std::placeholders::_1 ) );
 
   CreationEvent creation;
   DestructionEvent destruction;
