@@ -40,7 +40,7 @@ int main( int, char** )
 
   std::cout << "#\n"
             << "# Posting a demo event. This should trigger two observers\n"
-            << "#\n"; 
+            << "#\n";
 
   dispatcher.post( DemoEvent() );
 

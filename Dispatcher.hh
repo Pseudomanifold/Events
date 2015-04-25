@@ -30,7 +30,7 @@ public:
     Describes the slot an observer has to implement to be able to process
     events that are posted.
   */
-    
+
   using SlotType = std::function< void( const Event& ) >;
 
   /**
