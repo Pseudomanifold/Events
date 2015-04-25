@@ -20,7 +20,7 @@ class Event
 public:
   virtual~ Event();
 
-  typedef const char* DescriptorType;
+  using DescriptorType = const char*;
 
   /** @returns The descriptor type of this event */
   virtual DescriptorType type() const = 0;
