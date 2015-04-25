@@ -1,32 +1,28 @@
-#include "Event.hh"
 #include "Connection.hh"
-#include "Subject.hh"
+#include "DemoEvent.hh"
+#include "Dispatcher.hh"
 
 #include <functional>
 #include <iostream>
 
 void freeObserver( const Event& event )
 {
-  if( event.type() == CreationEvent::eventType )
-    std::cout << __PRETTY_FUNCTION__ << ": Creation" << std::endl;
-  else if( event.type() == DestructionEvent::eventType )
-    std::cout << __PRETTY_FUNCTION__ << ": Destruction" << std::endl;
+  if( event.type() == DemoEvent::descriptor )
+    std::cout << __PRETTY_FUNCTION__ << ": DemoEvent" << std::endl;
 }
 
 class ClassObserver
 {
 public:
-  void handleCreation( const Event& )
+  void handle( const Event& e )
   {
-    std::cout << __PRETTY_FUNCTION__ << std::endl;
-  }
-
-  void handleDestruction( const Event& e )
-  {
-    std::cout << __PRETTY_FUNCTION__ << std::endl;
-
-    if( dynamic_cast<const DestructionEvent*>( &e ) )
-      std::cout << __PRETTY_FUNCTION__ << ": Dynamic cast worked" << std::endl;
+    if( e.type() == DemoEvent::descriptor )
+    {
+      // This demonstrates how to obtain the underlying event type in case a
+      // slot is set up to handle multiple events of different types.
+      const DemoEvent& demoEvent = static_cast<const DemoEvent&>( e );
+      std::cout << __PRETTY_FUNCTION__ << ": " << demoEvent.type() << std::endl;
+    }
   }
 };
 
@@ -34,22 +30,39 @@ int main( int, char** )
 {
   ClassObserver classObserver;
 
-  Subject s;
-  s.registerObserver( CreationEvent::eventType,    freeObserver );
-  s.registerObserver( DestructionEvent::eventType, freeObserver );
-  auto handle = s.registerObserver( CreationEvent::eventType,    std::bind( &ClassObserver::handleCreation, &classObserver, std::placeholders::_1 ) );
-  s.registerObserver( DestructionEvent::eventType, std::bind( &ClassObserver::handleDestruction, &classObserver, std::placeholders::_1 ) );
+  Dispatcher dispatcher;
 
-  CreationEvent creation;
-  DestructionEvent destruction;
+  auto connection1 = dispatcher.subscribe( DemoEvent::descriptor, freeObserver );
+  auto connection2 = dispatcher.subscribe( DemoEvent::descriptor,
+                                           std::bind( &ClassObserver::handle, 
+                                                      classObserver,
+                                                      std::placeholders::_1 ) );
 
-  s.notify( creation );
-  s.notify( destruction );
+  std::cout << "#\n"
+            << "# Posting a demo event. This should trigger two observers\n"
+            << "#\n"; 
 
-  handle.disconnect();
+  dispatcher.post( DemoEvent() );
 
-  s.notify( creation );
-  s.notify( destruction );
+  connection1.disconnect();
+
+  std::cout << "#\n"
+            << "# Posting a demo event. This should trigger one observer\n"
+            << "#\n";
+
+  dispatcher.post( DemoEvent() );
+
+  connection2.disconnect();
+
+  std::cout << "#\n"
+            << "# Posting a demo event. This should trigger no observers\n"
+            << "#\n";
+
+  dispatcher.post( DemoEvent() );
+
+  // Multiple disconnects are not harmful
+  connection1.disconnect();
+  connection2.disconnect();
 
   return 0;
 }

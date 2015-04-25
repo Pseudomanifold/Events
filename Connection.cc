@@ -1,9 +1,7 @@
 #include "Connection.hh"
-#include "Subject.hh"
+#include "Dispatcher.hh"
 
-Connection::Connection( Subject& subject, unsigned int id )
-  : _subject( subject )
-  , _id( id )
+Connection::Connection()
 {
 }
 
@@ -14,5 +12,12 @@ unsigned int Connection::id() const
 
 void Connection::disconnect()
 {
-  _subject.unregisterObserver( *this );
+  if( _dispatcher )
+    _dispatcher->unsubscribe( *this );
+}
+
+Connection::Connection( Dispatcher* dispatcher, unsigned int id )
+  : _dispatcher( dispatcher )
+  , _id( id )
+{
 }
