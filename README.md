@@ -12,3 +12,33 @@ in several ways:
   dispatcher only knows about a base event class. Observers only need to
   provide a slot with a pre-defined interface.
 * Observers may subscribe and unsubscribe from receiving events.
+
+## Technical details
+
+This implementation works using pure C++11 features. At the heart of the
+event processing are arbitrary function objects. Each observer needs to
+implement a slot with a certain interface. These function objects are
+then stored in a map, which is indexed by an event descriptor.
+Currently, the event descriptor is simply a `const char*`. This seemed
+straightforward to implement. Upon posting new events, the dispatcher
+only needs to traverse the map and call all correspond slots.
+
+Please see the file `Demo.cc` for a simple demonstration.
+
+## Limitations
+
+Currently, I am assuming that everything runs in a single thread. The
+processing gets slightly more complicated once observers are permitted
+to receive objects in another thread. In this case, I would suggest
+using `std::shared_ptr` to ensure that an event is not prematurely
+destroyed. Maybe I will implement this someday...
+
+## Criticism
+
+I would welcome any critical comments regarding the design. I think that
+the system is relatively small, efficient, and decoupled. Please help me
+improve the code if you beg to differ!
+
+## License
+
+The code is released under the MIT license.
