@@ -1,2 +1,7 @@
 build/
 *.swp
+CMakeFiles/*
+cmake_install.cmake
+CMakeCache.txt
+events_demo
+Makefile

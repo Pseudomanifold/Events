@@ -1,8 +1,6 @@
 #ifndef EVENT_HH__
 #define EVENT_HH__
-
 #include <string>
-
 /**
   @class Event
   @brief Base class for all events
@@ -14,16 +12,19 @@
 
   Unfortunately, I have no idea how to enforce the existence of this attribute.
 */
-
-class Event
-{
+template <typename T>
+class Event{
+protected:
+  T _type;
+  std::string _name;
+  bool _handled = false;
 public:
-  virtual~ Event();
-
-  using DescriptorType = const char*;
-
-  /** @returns The descriptor type of this event */
-  virtual DescriptorType type() const = 0;
+  Event() = default;
+  Event(T type, const std::string& name = "") : _type(type), _name(name){};
+  inline const T type() const { return _type;};
+  inline const std::string& getName() const { return _name;};
+  virtual bool isHandled(){ return _handled;};
+private:
 };
 
 #endif

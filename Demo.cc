@@ -1,68 +1,65 @@
-#include "Connection.hh"
 #include "DemoEvent.hh"
 #include "Dispatcher.hh"
 
 #include <functional>
 #include <iostream>
 
-void freeObserver( const Event& event )
-{
-  if( event.type() == DemoEvent::descriptor )
-    std::cout << __PRETTY_FUNCTION__ << ": DemoEvent" << std::endl;
+void onEvent1(const Event<EventType1>& event){
+  if(event.type() == EventType1::TEST_EVENT){
+    std::cout << "Function Event TYPE: EventType1::TEST_EVENT " << event.getName() << std::endl;
+  }
 }
 
-class ClassObserver
+void onEvent2(const Event<EventType2>& event){
+  if(event.type() == EventType2::TEST_EVENT){
+    std::cout << "Function Event TYPE: EventType2::TEST_EVENT " << event.getName() << std::endl;
+  }
+}
+
+class ClassObserver1
 {
 public:
-  void handle( const Event& e )
+  void handle( const Event<EventType1>& e )
   {
-    if( e.type() == DemoEvent::descriptor )
+    if( e.type() == EventType1::TEST_EVENT )
     {
       // This demonstrates how to obtain the underlying event type in case a
       // slot is set up to handle multiple events of different types.
-      const DemoEvent& demoEvent = static_cast<const DemoEvent&>( e );
-      std::cout << __PRETTY_FUNCTION__ << ": " << demoEvent.type() << std::endl;
+      // const DemoEvent& demoEvent = static_cast<const DemoEvent&>( e );
+      // std::cout << __PRETTY_FUNCTION__ << ": " << demoEvent.type() << std::endl;
+      std::cout << "Class Event EventType1::TEST_EVENT " << e.getName() << std::endl;
     }
   }
 };
 
 int main( int, char** )
 {
-  ClassObserver classObserver;
+  ClassObserver1 classObserver1;
 
-  Dispatcher dispatcher;
+  Dispatcher<EventType1> dispatcher1;
+  Dispatcher<EventType2> dispatcher2;
+  Dispatcher<EventType1> dispatcher3;
 
-  auto connection1 = dispatcher.subscribe( DemoEvent::descriptor, freeObserver );
-  auto connection2 = dispatcher.subscribe( DemoEvent::descriptor,
-                                           std::bind( &ClassObserver::handle, 
-                                                      classObserver,
-                                                      std::placeholders::_1 ) );
+  dispatcher1.subscribe( EventType1::TEST_EVENT, onEvent1 );
+  dispatcher1.subscribe( EventType1::TEST_EVENT, std::bind( &ClassObserver1::handle, classObserver1, std::placeholders::_1 ) );
+  dispatcher2.subscribe( EventType2::TEST_EVENT, onEvent2);
+  dispatcher3.subscribe( EventType1::TEST_EVENT2, onEvent1);
 
   std::cout << "#\n"
             << "# Posting a demo event. This should trigger two observers\n"
             << "#\n";
-
-  dispatcher.post( DemoEvent() );
-
-  connection1.disconnect();
+  DemoEvent e;
+  dispatcher1.post(e);
 
   std::cout << "#\n"
             << "# Posting a demo event. This should trigger one observer\n"
             << "#\n";
-
-  dispatcher.post( DemoEvent() );
-
-  connection2.disconnect();
+  DemoEventAlt e2;
+  dispatcher2.post(e2);
 
   std::cout << "#\n"
             << "# Posting a demo event. This should trigger no observers\n"
             << "#\n";
-
-  dispatcher.post( DemoEvent() );
-
-  // Multiple disconnects are not harmful
-  connection1.disconnect();
-  connection2.disconnect();
-
+  dispatcher3.post(e);
   return 0;
 }
